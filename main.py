@@ -1,5 +1,14 @@
 from scraper import Scraper
 from time import sleep
+import sys
+import os
+
+if getattr(sys, "frozen", False): # Apenas quando rodar como executável.
+    os.chdir(os.path.dirname(sys.executable))
+
+    from seleniumbase.drivers import brave_drivers, cft_drivers
+    for pkg in (brave_drivers, cft_drivers):
+        os.makedirs(os.path.dirname(os.path.realpath(pkg.__file__)), exist_ok = True)
 
 def main():
     index = 300000
