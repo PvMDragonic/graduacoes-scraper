@@ -1,13 +1,47 @@
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from seleniumbase import Driver
+from functools import cache
 from lxml import html
+import winreg
+import os
+
+@cache # Salva o retorno dessa função após a primeira execução.
+def find_browser() -> str:
+    candidates = [
+        ("chrome.exe", r"Google\Chrome\Application\chrome.exe"),
+        ("brave.exe", r"BraveSoftware\Brave-Browser\Application\brave.exe"),
+    ]
+
+    for exe, relative_path in candidates:
+        # Windows registra os navegadores instalados em "App Paths".
+        for hive in (winreg.HKEY_CURRENT_USER, winreg.HKEY_LOCAL_MACHINE):
+            try:
+                key_path = rf"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\{exe}"
+                with winreg.OpenKey(hive, key_path) as key:
+                    path = winreg.QueryValue(key, None).strip('"')
+                    if os.path.isfile(path):
+                        return path
+            except OSError:
+                pass
+
+        # Tenta as pastas de instalação padrão.
+        for base in ("PROGRAMFILES", "PROGRAMFILES(X86)", "LOCALAPPDATA"):
+            folder = os.environ.get(base)
+            if folder:
+                path = os.path.join(folder, relative_path)
+                if os.path.isfile(path):
+                    return path
+
+    # "Chrome for Testing" como backup final.
+    return "cft"
 
 class Scraper:
     def __init__(self, base_url: str):
         self.base_url = base_url
         self.driver = Driver(
-            binary_location = r"C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe",
+            binary_location = find_browser(),
             headless = False,
             uc = True
         )
