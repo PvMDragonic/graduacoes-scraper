@@ -33,6 +33,12 @@ class Scraper:
             return e
 
     def parse(self, tree) -> str:
+        if isinstance(tree, Exception):
+            return 'ERROR1'
+
+        if tree is None:
+            return 'ERROR2'
+
         hasTarget = tree.xpath("boolean(//fieldset[contains(., 'PSICOLOGIA')])")
         return self.base_url if hasTarget else ''
 
