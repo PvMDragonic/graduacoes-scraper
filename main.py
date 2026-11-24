@@ -15,6 +15,7 @@ def main():
                 file.write(results + "\n")
 
         print(f"Página nº {index} analisada.")
+        scraper.close()
         index += 1
         sleep(0.5)
             
