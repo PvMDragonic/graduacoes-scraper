@@ -19,12 +19,20 @@ def ask_start_index(default: int = 300000) -> int:
         if value.isdigit():
             return int(value)
 
+def ask_major(default: str = 'PSICOLOGIA') -> str:
+    while True:
+        value = input(f"Insira o curso, ou pressione Enter para usar o padrão (PSICOLOGIA): ").strip()
+        if not value:
+            return default
+        else:
+            return value.upper().strip()
+
 def main():
     BASE_URL = "https://plataformacarolinabori.mec.gov.br/consulta-publica/processo/detalhar/{}"
     index = ask_start_index()
     fails = 0
 
-    scraper = Scraper()
+    scraper = Scraper(ask_major())
 
     try:
         while fails < 3:

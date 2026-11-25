@@ -38,13 +38,14 @@ def find_browser() -> str:
     return "cft"
 
 class Scraper:
-    def __init__(self):
+    def __init__(self, major: str):
         self.driver = Driver(
             binary_location = find_browser(),
             headless = False,
             uc = True
         )
         self.driver.set_page_load_timeout(30)
+        self.major = major
 
     def fetch(self, url: str):
         def page_state(driver):
@@ -77,7 +78,7 @@ class Scraper:
         if tree is None:
             return False
 
-        return tree.xpath("boolean(//fieldset[contains(., 'PSICOLOGIA')])")
+        return tree.xpath(f"boolean(//fieldset[contains(., '{self.major}')])")
 
     def scrape(self, url: str) -> str | None:
         tree = self.fetch(url)
