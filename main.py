@@ -1,4 +1,5 @@
 from scraper import Scraper
+from random import uniform
 from time import sleep
 import sys
 import os
@@ -32,8 +33,8 @@ def main():
                         file.write(results + "\n")
 
             print(f"Página nº {index} analisada.")
+            sleep(uniform(1.0, 1.5))
             index += 1
-            sleep(1)
     finally:
         scraper.close()   
             
