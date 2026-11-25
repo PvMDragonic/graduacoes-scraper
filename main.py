@@ -11,10 +11,17 @@ if getattr(sys, "frozen", False): # Apenas quando rodar como executável.
     for pkg in (brave_drivers, cft_drivers):
         os.makedirs(os.path.dirname(os.path.realpath(pkg.__file__)), exist_ok = True)
 
+def ask_start_index(default: int = 300000) -> int:
+    while True:
+        value = input(f"Insira o íncide inicial, ou pressione Enter para usar o padrão (300,000): ").strip()
+        if not value:
+            return default
+        if value.isdigit():
+            return int(value)
 
 def main():
     BASE_URL = "https://plataformacarolinabori.mec.gov.br/consulta-publica/processo/detalhar/{}"
-    index = 300000
+    index = ask_start_index()
     fails = 0
 
     scraper = Scraper()
